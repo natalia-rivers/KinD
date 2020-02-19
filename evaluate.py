@@ -1,4 +1,4 @@
-# coding: utf-8
+#coding: utf.compat.v1-8
 from __future__ import print_function
 import os
 import time
@@ -11,14 +11,14 @@ from model import *
 from glob import glob
 from skimage import color,filters
 
-sess = tf.Session()
+sess = tf.compat.v1.Session()
 
-input_decom = tf.placeholder(tf.float32, [None, None, None, 3], name='input_decom')
-input_low_r = tf.placeholder(tf.float32, [None, None, None, 3], name='input_low_r')
-input_low_i = tf.placeholder(tf.float32, [None, None, None, 1], name='input_low_i')
-input_high_r = tf.placeholder(tf.float32, [None, None, None, 3], name='input_high_r')
-input_high_i = tf.placeholder(tf.float32, [None, None, None, 1], name='input_high_i')
-input_low_i_ratio = tf.placeholder(tf.float32, [None, None, None, 1], name='input_low_i_ratio')
+input_decom = tf.compat.v1.placeholder(tf.compat.v1.float32, [None, None, None, 3], name='input_decom')
+input_low_r = tf.compat.v1.placeholder(tf.compat.v1.float32, [None, None, None, 3], name='input_low_r')
+input_low_i = tf.compat.v1.placeholder(tf.compat.v1.float32, [None, None, None, 1], name='input_low_i')
+input_high_r = tf.compat.v1.placeholder(tf.compat.v1.float32, [None, None, None, 3], name='input_high_r')
+input_high_i = tf.compat.v1.placeholder(tf.compat.v1.float32, [None, None, None, 1], name='input_high_i')
+input_low_i_ratio = tf.compat.v1.placeholder(tf.compat.v1.float32, [None, None, None, 1], name='input_low_i_ratio')
 
 [R_decom, I_decom] = DecomNet_simple(input_decom)
 decom_output_R = R_decom
@@ -26,16 +26,16 @@ decom_output_I = I_decom
 output_r = Restoration_net(input_low_r, input_low_i)
 output_i = Illumination_adjust_net(input_low_i, input_low_i_ratio)
 
-var_Decom = [var for var in tf.trainable_variables() if 'DecomNet' in var.name]
-var_adjust = [var for var in tf.trainable_variables() if 'Illumination_adjust_net' in var.name]
-var_restoration = [var for var in tf.trainable_variables() if 'Restoration_net' in var.name]
+var_Decom = [var for var in tf.compat.v1.trainable_variables() if 'DecomNet' in var.name]
+var_adjust = [var for var in tf.compat.v1.trainable_variables() if 'Illumination_adjust_net' in var.name]
+var_restoration = [var for var in tf.compat.v1.trainable_variables() if 'Restoration_net' in var.name]
 
-saver_Decom = tf.train.Saver(var_list = var_Decom)
-saver_adjust = tf.train.Saver(var_list=var_adjust)
-saver_restoration = tf.train.Saver(var_list=var_restoration)
+saver_Decom = tf.compat.v1.train.Saver(var_list = var_Decom)
+saver_adjust = tf.compat.v1.train.Saver(var_list=var_adjust)
+saver_restoration = tf.compat.v1.train.Saver(var_list=var_restoration)
 
 decom_checkpoint_dir ='./checkpoint/decom_net_train/'
-ckpt_pre=tf.train.get_checkpoint_state(decom_checkpoint_dir)
+ckpt_pre=tf.compat.v1.train.get_checkpoint_state(decom_checkpoint_dir)
 if ckpt_pre:
     print('loaded '+ckpt_pre.model_checkpoint_path)
     saver_Decom.restore(sess,ckpt_pre.model_checkpoint_path)
@@ -43,7 +43,7 @@ else:
     print('No decomnet checkpoint!')
 
 checkpoint_dir_adjust = './checkpoint/illumination_adjust_net_train/'
-ckpt_adjust=tf.train.get_checkpoint_state(checkpoint_dir_adjust)
+ckpt_adjust=tf.compat.v1.train.get_checkpoint_state(checkpoint_dir_adjust)
 if ckpt_adjust:
     print('loaded '+ckpt_adjust.model_checkpoint_path)
     saver_adjust.restore(sess,ckpt_adjust.model_checkpoint_path)
@@ -51,7 +51,7 @@ else:
     print("No adjust pre model!")
 
 checkpoint_dir_restoration = './checkpoint/Restoration_net_train/'
-ckpt=tf.train.get_checkpoint_state(checkpoint_dir_restoration)
+ckpt=tf.compat.v1.train.get_checkpoint_state(checkpoint_dir_restoration)
 if ckpt:
     print('loaded '+ckpt.model_checkpoint_path)
     saver_restoration.restore(sess,ckpt.model_checkpoint_path)
